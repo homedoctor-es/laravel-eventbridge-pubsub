@@ -2,6 +2,8 @@
 
 namespace HomedoctorEs\EventBridgePubSub\Values;
 
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 
 class Message
@@ -18,13 +20,23 @@ class Message
         $this->detail = $message['detail'] ?? null;
     }
 
-    public function prepareForPublish(array $payload)
+    public function prepareForPublish(array $payload, string $event, string $source)
     {
+        $this->cleanPayload($payload);
+
         $this->detail = [
-            'message_id' => Uuid::uuid4(),
-            'timestamp' => now(),
+            'message_id' => Str::uuid(),
+            'timestamp' => Carbon::now(),
             'payload' => $payload
         ];
+
+        $this->event = $event;
+        $this->source = $source;
+    }
+
+    private function cleanPayload(&$payload): void
+    {
+        unset($payload['socket']);
     }
 
     public function source(): ?string

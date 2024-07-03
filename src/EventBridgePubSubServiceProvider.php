@@ -43,7 +43,7 @@ class EventBridgePubsubServiceProvider extends ServiceProvider
     /**
      * Create an instance of the EventBridge driver for broadcasting.
      *
-     * @param  array  $config
+     * @param array $config
      * @return \Illuminate\Contracts\Broadcasting\Broadcaster
      */
     public function createEventBridgeDriver(array $config)

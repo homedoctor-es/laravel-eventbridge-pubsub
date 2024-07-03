@@ -22,7 +22,7 @@ class EventBridgeEventDispatcherJob extends SqsJob implements JobContract
         $this->message = new Message($this->payload());
         if (!$this->message->isValid()) {
             if ($this->container->bound('log')) {
-                Log::error('SqsSnsQueue: Invalid payload. '.
+                Log::error('SqsSnsQueue: Invalid payload. ' .
                     'Make sure your JSON is a valid JSON object and has fields detail and detail-type.', $this->job);
             }
 

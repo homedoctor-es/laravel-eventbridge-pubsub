@@ -3,6 +3,9 @@
 namespace HomedoctorEs\EventBridgePubSub\Broadcasting\Broadcasters;
 
 use Aws\EventBridge\EventBridgeClient;
+use HomedoctorEs\EventBridgePubSub\Values\EventBridgeEvent;
+use HomedoctorEs\EventBridgePubSub\Values\EventBridgeEvents;
+use HomedoctorEs\EventBridgePubSub\Values\Message;
 use Illuminate\Broadcasting\Broadcasters\Broadcaster;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -10,6 +13,7 @@ use Ramsey\Uuid\Uuid;
 
 class EventBridgeBroadcaster extends Broadcaster
 {
+
     /**
      * @var EventBridgeClient
      */
@@ -23,8 +27,8 @@ class EventBridgeBroadcaster extends Broadcaster
     /**
      * EventBridgeBroadcaster constructor.
      *
-     * @param  EventBridgeClient  $eventBridgeClient
-     * @param  string  $source
+     * @param EventBridgeClient $eventBridgeClient
+     * @param string $source
      */
     public function __construct(EventBridgeClient $eventBridgeClient, string $source = '')
     {
@@ -55,7 +59,7 @@ class EventBridgeBroadcaster extends Broadcaster
     {
         $events = $this->mapToEventBridgeEntries($channels, $event, $payload);
         $result = $this->eventBridgeClient->putEvents([
-            'Entries' => $events,
+            'Entries' => $events->toArray(),
         ]);
 
         if ($this->failedToBroadcast($result)) {
@@ -68,25 +72,22 @@ class EventBridgeBroadcaster extends Broadcaster
     }
 
     /**
-     * @param  array  $channels
-     * @param  string  $event
-     * @param  array  $payload
+     * @param array $channels
+     * @param string $event
+     * @param array $payload
      * @return array
      */
-    protected function mapToEventBridgeEntries(array $channels, string $event, array $payload): array
+    protected function mapToEventBridgeEntries(array $channels, string $event, array $payload): EventBridgeEvents
     {
-        $this->cleanPayload($payload);
-
-        return collect($channels)
-            ->map(function ($channel) use ($event, $payload) {
-                return [
-                    'Detail' => json_encode($payload),
-                    'DetailType' => $event,
-                    'EventBusName' => $channel,
-                    'Source' => $this->source,
-                ];
+        $events = new EventBridgeEvents();
+        collect($channels)
+            ->each(function ($channel) use ($event, $payload, &$events) {
+                $message = new Message();
+                $message->prepareForPublish($payload, $event, $this->source);
+                $events->addEvent(new EventBridgeEvent($message, $channel));
             })
             ->all();
+        return $events;
     }
 
     protected function failedToBroadcast(?\Aws\Result $result): bool
@@ -94,16 +95,6 @@ class EventBridgeBroadcaster extends Broadcaster
         return $result
             && $result->hasKey('FailedEntryCount')
             && $result->get('FailedEntryCount') > 0;
-    }
-
-    private function cleanPayload(&$payload): void
-    {
-        unset($payload['socket']);
-    }
-
-    private function hydratePayload(&$payload): void
-    {
-        $payload['message_id'] = Uuid::uuid4();
     }
 
 }

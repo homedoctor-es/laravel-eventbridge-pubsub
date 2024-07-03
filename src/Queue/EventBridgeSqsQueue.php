@@ -2,13 +2,14 @@
 
 namespace HomedoctorEs\EventBridgePubSub\Queue;
 
+use HomedoctorEs\EventBridgePubSub\Queue\Jobs\EventBridgeEventDispatcherJob;
+use HomedoctorEs\EventBridgePubSub\Queue\Jobs\SnsEventDispatcherJob;
 use Illuminate\Queue\SqsQueue;
 use Illuminate\Support\Facades\Log;
-use HomedoctorEs\EventBridgePubSub\Queue\Jobs\SnsEventDispatcherJob;
-use HomedoctorEs\EventBridgePubSub\Queue\Jobs\EventBridgeEventDispatcherJob;
 
 class EventBridgeSqsQueue extends SqsQueue
 {
+
     /**
      * @inheritDoc
      */
@@ -36,7 +37,7 @@ class EventBridgeSqsQueue extends SqsQueue
     /**
      * Pop the next job off of the queue.
      *
-     * @param  string  $queue
+     * @param string $queue
      * @return \Illuminate\Contracts\Queue\Job|null
      */
     public function pop($queue = null)
@@ -47,11 +48,12 @@ class EventBridgeSqsQueue extends SqsQueue
             'AttributeNames' => ['ApproximateReceiveCount'],
         ]);
 
-        if (! is_null($response['Messages']) && count($response['Messages']) > 0) {
+        if (!is_null($response['Messages']) && count($response['Messages']) > 0) {
             return new EventBridgeEventDispatcherJob(
                 $this->container, $this->sqs, $response['Messages'][0],
                 $this->connectionName, $queue
             );
         }
     }
+
 }
