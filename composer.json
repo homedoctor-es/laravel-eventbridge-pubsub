@@ -1,0 +1,45 @@
+{
+    "name": "homedoctor-es/laravel-eventbridge-pubsub",
+    "description": "A Laravel plugin to broadcast events to EventBridge an consume it via sqs",
+    "keywords": ["laravel", "broadcasting", "broadcast", "queue", "listeners", "pubsub", "aws", "sns", "sqs"],
+    "homepage": "https://github.com/homedoctor-es/laravel-eventbridge-pubsub",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Homedoctor es",
+            "email": "juan.sola@homedoctor.es"
+        }
+    ],
+    "require": {
+        "php": "^7.3|^8.0",
+        "ext-json": "*",
+        "aws/aws-sdk-php": "^3.155",
+        "illuminate/support": "^8.52|^9.0|^10.0|^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "HomedoctorEs\\EventBridgePubSub\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "HomedoctorEs\\EventBridgePubSub\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "HomedoctorEs\\EventBridgePubSub\\EventBridgePubSubServiceProvider"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --colors=always",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
+    }
+}
