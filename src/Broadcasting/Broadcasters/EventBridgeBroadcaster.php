@@ -3,6 +3,7 @@
 namespace HomedoctorEs\EventBridgePubSub\Broadcasting\Broadcasters;
 
 use Aws\EventBridge\EventBridgeClient;
+use HomedoctorEs\EventBridgePubSub\Events\EventBridgeMessagePublished;
 use HomedoctorEs\EventBridgePubSub\Values\EventBridgeEvent;
 use HomedoctorEs\EventBridgePubSub\Values\EventBridgeEvents;
 use HomedoctorEs\EventBridgePubSub\Values\Message;
@@ -57,9 +58,9 @@ class EventBridgeBroadcaster extends Broadcaster
      */
     public function broadcast(array $channels, $event, array $payload = [])
     {
-        $events = $this->mapToEventBridgeEntries($channels, $event, $payload);
+        $eventBridgeEvents = $this->mapToEventBridgeEntries($channels, $event, $payload);
         $result = $this->eventBridgeClient->putEvents([
-            'Entries' => $events->toArray(),
+            'Entries' => $eventBridgeEvents->toArray(),
         ]);
 
         if ($this->failedToBroadcast($result)) {
@@ -68,6 +69,13 @@ class EventBridgeBroadcaster extends Broadcaster
                     return Arr::hasAny($entry, ['ErrorCode', 'ErrorMessage']);
                 })->toArray(),
             ]);
+        } else {
+            /**
+             * @var EventBridgeEvent $eventBridgeEvent
+             */
+            foreach ($eventBridgeEvents->events() as $eventBridgeEvent) {
+                event(new EventBridgeMessagePublished($eventBridgeEvent->message()));
+            }
         }
     }
 

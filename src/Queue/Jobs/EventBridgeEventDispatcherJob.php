@@ -2,11 +2,11 @@
 
 namespace HomedoctorEs\EventBridgePubSub\Queue\Jobs;
 
+use HomedoctorEs\EventBridgePubSub\Events\EventBridgeMessageConsumed;
 use HomedoctorEs\EventBridgePubSub\Values\Message;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Queue\Job as JobContract;
 use Illuminate\Queue\Jobs\SqsJob;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 class EventBridgeEventDispatcherJob extends SqsJob implements JobContract
@@ -35,6 +35,7 @@ class EventBridgeEventDispatcherJob extends SqsJob implements JobContract
             $this->resolve(Dispatcher::class)->dispatch($eventName, [
                 $this->message
             ]);
+            event(new EventBridgeMessageConsumed($this->message));
         }
 
         $this->delete();

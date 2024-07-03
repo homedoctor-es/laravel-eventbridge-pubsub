@@ -4,6 +4,10 @@ namespace HomedoctorEs\EventBridgePubSub;
 
 use Aws\EventBridge\EventBridgeClient;
 use HomedoctorEs\EventBridgePubSub\Broadcasting\Broadcasters\EventBridgeBroadcaster;
+use HomedoctorEs\EventBridgePubSub\Events\EventBridgeMessageConsumed;
+use HomedoctorEs\EventBridgePubSub\Events\EventBridgeMessagePublished;
+use HomedoctorEs\EventBridgePubSub\Listeners\EventBridgeMessageConsumedListener;
+use HomedoctorEs\EventBridgePubSub\Listeners\EventBridgeMessagePublishedListener;
 use HomedoctorEs\EventBridgePubSub\Queue\Connectors\EventBridgeSqsConnector;
 use Illuminate\Contracts\Broadcasting\Factory as BroadcastManager;
 use Illuminate\Contracts\Container\Container;
@@ -14,6 +18,14 @@ use Illuminate\Support\Arr;
 class EventBridgePubsubServiceProvider extends ServiceProvider
 {
 
+    protected $listen = [
+        EventBridgeMessageConsumed::class => [
+            EventBridgeMessageConsumedListener::class
+        ],
+        EventBridgeMessagePublished::class => [
+            EventBridgeMessagePublishedListener::class
+        ],
+    ];
     /**
      * @inheritDoc
      */
