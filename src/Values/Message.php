@@ -59,7 +59,7 @@ class Message
         return $this->detail()['message_id'];
     }
 
-    public function timestamp(): array
+    public function timestamp(): Carbon
     {
         return $this->detail()['timestamp'];
     }
@@ -72,6 +72,18 @@ class Message
     public function isValid(): bool
     {
         return $this->detail() && $this->event();
+    }
+
+    public function toModelAttributes()
+    {
+        return [
+            'message_id' => $this->messageId(),
+            'published_at' => $this->timestamp(),
+            'source' => $this->source(),
+            'payload' => $this->payload(),
+            'expires_at' => now()->addMinutes(config('eventbridge-pubsub.message_log_db_expiration_minutes')),
+            'event' => $this->event()
+        ];
     }
 
 }

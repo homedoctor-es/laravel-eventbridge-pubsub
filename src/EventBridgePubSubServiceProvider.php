@@ -4,6 +4,7 @@ namespace HomedoctorEs\EventBridgePubSub;
 
 use Aws\EventBridge\EventBridgeClient;
 use HomedoctorEs\EventBridgePubSub\Broadcasting\Broadcasters\EventBridgeBroadcaster;
+use HomedoctorEs\EventBridgePubSub\Database\Models\EventBridgeMessage;
 use HomedoctorEs\EventBridgePubSub\Events\EventBridgeMessageConsumed;
 use HomedoctorEs\EventBridgePubSub\Events\EventBridgeMessagePublished;
 use HomedoctorEs\EventBridgePubSub\Listeners\EventBridgeMessageConsumedListener;
@@ -14,6 +15,8 @@ use Illuminate\Contracts\Container\Container;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Queue\QueueManager;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class EventBridgePubsubServiceProvider extends ServiceProvider
 {
@@ -29,16 +32,10 @@ class EventBridgePubsubServiceProvider extends ServiceProvider
 
     public function boot()
     {
-        // Comprobar si la base de datos existe
-        //try {
-        //    \DB::connection()->getPdo();
-        //} catch (\Exception $e) {
-        //La base de datos no existe, lanzar la migración
-        //      $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        //}
+        $this->registerMigrations();
 
         $this->publishes([
-            __DIR__.'/config/eventbridge-pubsub.php' => config_path('eventbridge-pubsub.php'),
+            __DIR__ . '/config/eventbridge-pubsub.php' => config_path('eventbridge-pubsub.php'),
         ], 'config');
     }
 
@@ -123,6 +120,17 @@ class EventBridgePubsubServiceProvider extends ServiceProvider
         return Arr::has($config, ['key', 'secret'])
             && Arr::get($config, 'key')
             && Arr::get($config, 'secret');
+    }
+
+    private function registerMigrations()
+    {
+        if (!config('eventbridge-pubsub.messages_log_active') || config('eventbridge-pubsub.message_log_db_connection') === null) {
+            return;
+        }
+
+        if (!Schema::connection(config('eventbridge-pubsub.message_log_db_connection'))->hasTable((new EventBridgeMessage())->getTable())) {
+            $this->loadMigrationsFrom(__DIR__ . '/Database/Migrations');
+        }
     }
 
 }
