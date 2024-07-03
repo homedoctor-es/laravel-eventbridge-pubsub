@@ -18,7 +18,10 @@
         "illuminate/queue": "^8.52|^9.0|^10.0|^11.0",
         "illuminate/bus": "^8.52|^9.0|^10.0|^11.0",
         "illuminate/database": "^8.52|^9.0|^10.0|^11.0",
-        "mongodb/laravel-mongodb": "4.5.0"
+        "illuminate/cache": "^8.52|^9.0|^10.0|^11.0",
+        "illuminate/container": "^8.52|^9.0|^10.0|^11.0",
+        "illuminate/events": "^8.52|^9.0|^10.0|^11.0",
+        "mongodb/laravel-mongodb": ">=v3.8.6"
     },
     "autoload": {
         "psr-4": {
