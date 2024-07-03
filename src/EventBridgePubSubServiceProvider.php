@@ -26,6 +26,22 @@ class EventBridgePubsubServiceProvider extends ServiceProvider
             EventBridgeMessagePublishedListener::class
         ],
     ];
+
+    public function boot()
+    {
+        // Comprobar si la base de datos existe
+        //try {
+        //    \DB::connection()->getPdo();
+        //} catch (\Exception $e) {
+        //La base de datos no existe, lanzar la migración
+        //      $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        //}
+
+        $this->publishes([
+            __DIR__.'/config/eventbridge-pubsub.php' => config_path('eventbridge-pubsub.php'),
+        ], 'config');
+    }
+
     /**
      * @inheritDoc
      */
