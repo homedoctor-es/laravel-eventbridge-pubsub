@@ -9,8 +9,6 @@ use MongoDB\BSON\UTCDateTime;
 class EventBridgeMessage extends Model
 {
 
-    protected $collection = 'eventbridge_messages_log';
-
     protected $fillable = [
         'message_id',
         'source',
@@ -28,6 +26,10 @@ class EventBridgeMessage extends Model
         'updated_at' => 'datetime',
     ];
 
+    public function getTable()
+    {
+        return config('eventbridge-pubsub.message_log_db_collection') ?? parent::getTable();
+    }
 
     public function getConnectionName()
     {
