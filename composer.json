@@ -11,16 +11,16 @@
         }
     ],
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^8.0|^8.1",
         "ext-json": "*",
         "aws/aws-sdk-php": "^3.155",
-        "illuminate/support": "^8.52|^9.0|^10.0|^11.0",
-        "illuminate/queue": "^8.52|^9.0|^10.0|^11.0",
-        "illuminate/bus": "^8.52|^9.0|^10.0|^11.0",
-        "illuminate/database": "^8.52|^9.0|^10.0|^11.0",
-        "illuminate/cache": "^8.52|^9.0|^10.0|^11.0",
-        "illuminate/container": "^8.52|^9.0|^10.0|^11.0",
-        "illuminate/events": "^8.52|^9.0|^10.0|^11.0",
+        "illuminate/support": "^8.52|^9.0",
+        "illuminate/queue": "^8.52|^9.0",
+        "illuminate/bus": "^8.52|^9.0",
+        "illuminate/database": "^8.52|^9.0",
+        "illuminate/cache": "^8.52|^9.0",
+        "illuminate/container": "^8.52|^9.0",
+        "illuminate/events": "^8.52|^9.0",
         "mongodb/laravel-mongodb": "^v3.8.6"
     },
     "autoload": {
