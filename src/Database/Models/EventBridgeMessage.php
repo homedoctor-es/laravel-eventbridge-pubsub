@@ -2,8 +2,7 @@
 
 namespace HomedoctorEs\EventBridgePubSub\Database\Models;
 
-use Carbon\Carbon;
-use Jenssegers\Mongodb\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\Model;
 use MongoDB\BSON\UTCDateTime;
 
 class EventBridgeMessage extends Model
