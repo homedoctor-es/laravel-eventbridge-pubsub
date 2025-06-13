@@ -2,6 +2,8 @@
 
 namespace HomedoctorEs\EventBridgePubSub\Values;
 
+use Carbon\CarbonInterface;
+use DateTimeInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
@@ -12,6 +14,8 @@ class Message
     protected ?string $source;
     protected ?string $event;
     protected ?array $detail;
+
+    private const TIMESTAMP_FORMAT = 'Y-m-d H:i:s.u';
 
     public function __construct(array $message = [])
     {
@@ -59,9 +63,34 @@ class Message
         return $this->detail()['message_id'];
     }
 
-    public function timestamp(): Carbon
+    public function timestamp(): ?Carbon
     {
-        return $this->detail()['timestamp'];
+        $timestamp = $this->detail()['timestamp'];
+
+        if ($timestamp instanceof CarbonInterface) {
+            return $timestamp;
+        }
+
+        if ($timestamp instanceof DateTimeInterface) {
+            return Carbon::parse($timestamp, $timestamp->getTimezone());
+        }
+
+        if (is_array($timestamp)) {
+            $date = null;
+            if (isset($timestamp['date'])) {
+                $date = Carbon::createFromFormat(self::TIMESTAMP_FORMAT, $timestamp['date']);
+            }
+            if ($date && isset($timestamp['timezone'])) {
+                $date->setTimezone($timestamp['timezone']);
+            }
+            return $date;
+        }
+
+        if (is_string($timestamp)) {
+            return Carbon::createFromFormat(self::TIMESTAMP_FORMAT, $timestamp);
+        }
+
+        return null;
     }
 
     public function payload(): array
