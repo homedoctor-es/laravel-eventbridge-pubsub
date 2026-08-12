@@ -18,7 +18,7 @@ class CreateEventBridgeMessagesLogTable extends Migration
         if (!$connection) {
             throw new \Exception("You have to define a connection to the eventbridge message log collection");
         }
-        Schema::connection($connection)->create('eventbridge_messages_log', function (Blueprint $collection) {
+        Schema::connection($connection)->create(config('eventbridge-pubsub.message_log_db_collection'), function (Blueprint $collection) {
             $collection->id();
             $collection->uuid('message_id')->unique();
             $collection->string('source');
@@ -49,7 +49,7 @@ class CreateEventBridgeMessagesLogTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('eventbridge_messages_log');
+        Schema::dropIfExists(config('eventbridge-pubsub.message_log_db_collection'));
     }
 
 }
