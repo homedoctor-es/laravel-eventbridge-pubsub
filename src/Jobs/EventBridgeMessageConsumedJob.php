@@ -14,7 +14,7 @@ class EventBridgeMessageConsumedJob extends EventBridgeMessageJob
 
     public function handle()
     {
-        Log::debug("message consumed -> " . $this->message->messageId());
+        //Log::debug("message consumed -> " . $this->message->messageId());
         /**
          * @var EventBridgeMessage $model
          */
