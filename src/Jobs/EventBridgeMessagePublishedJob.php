@@ -14,7 +14,7 @@ class EventBridgeMessagePublishedJob extends EventBridgeMessageJob
 
     public function handle()
     {
-        Log::debug("message published -> " . $this->message->messageId());
+        //Log::debug("message published -> " . $this->message->messageId());
         $model = new EventBridgeMessage();
         $model->fill($this->message->toModelAttributes());
         $model->save();
